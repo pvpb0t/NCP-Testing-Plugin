@@ -1,0 +1,8 @@
+name: Brogle
+version: '${project.version}'
+main: me.pvpb0t.brogle.Brogle
+commands:
+  password:
+    description: Allows players to authenticate with a password.
+    usage: /password <password>
+softdepend: [NoCheatPlus]
