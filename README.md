@@ -9,6 +9,8 @@ Show flags in chat:
 
 Also takes a password so you can run the server offline to test features through ide
 
+<h1> Add this in the ncp config to prevent kick</h1>
+
 ```
   kickagainst: title [player] title "&c&l(!)&7 Invalid block placements."
   kickalive: title [player] title "&c&l(!)&7 Too many keep-alive packets."
