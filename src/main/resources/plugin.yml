@@ -5,4 +5,7 @@ commands:
   password:
     description: Allows players to authenticate with a password.
     usage: /password <password>
+  setLockPos:
+    description: Set the lock position of an operator on the server, they will be teleported back to this location if they try to move away from it.
+    usage: /setLockPos
 softdepend: [NoCheatPlus]

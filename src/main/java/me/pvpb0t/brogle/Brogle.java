@@ -5,6 +5,7 @@ import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.components.NoCheatPlusAPI;
 import fr.neatmonster.nocheatplus.hooks.NCPHookManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,10 +26,13 @@ public final class Brogle extends JavaPlugin implements CommandExecutor {
             getServer().getPluginManager().registerEvents(new PlayerEventListener(this), this);
             // Registrera lösenordkommandot
             PluginCommand passwordCommand = getCommand("password");
-            boolean hasNCP = Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus");
             passwordCommand.setExecutor(this);
             passwordCommand.setTabCompleter(this);
-            System.out.println("Found ncp");
+
+            PluginCommand LockPos = getCommand("setLockPos");
+            LockPos.setExecutor(this);
+            LockPos.setTabCompleter(this);
+
             NoCheatPlusAPI api = NCPAPIProvider.getNoCheatPlusAPI();
             NCPHookManager.addHook(CheckType.ALL,new NCPHandler(this));
             // Skapa pluginens data-mapp om den inte redan finns
@@ -50,11 +54,14 @@ public final class Brogle extends JavaPlugin implements CommandExecutor {
         // Denna metod hanterar kommandon som skickas till pluginen.
         @Override
         public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage("This command can only be run by a player.");
+                return false;
+            }
+            Player player = (Player) sender;
             // Om kommandot är "password"
             if (command.getName().equalsIgnoreCase("password")) {
                 // Kontrollera om avsändaren är en spelare.
-                if (sender instanceof Player) {
-                    Player player = (Player) sender;
                     // Kontrollera om spelaren finns i listan över spelare som måste autentisera.
                     if (!authPlayers.contains(player)) {
                         String configPassword = this.getConfig().getString("password", "1234");
@@ -72,12 +79,26 @@ public final class Brogle extends JavaPlugin implements CommandExecutor {
                     // Send an error message to the player
                     player.sendMessage("You do not need to authenticate.");
                 }
-            } else {
-                // Send an error message to the sender
-                sender.sendMessage("You must be a player to use this command.");
-            }
             return true;
-        }
+        }else if(command.getName().equalsIgnoreCase("setLockPos")){
+                if(player.isOp()){
+                    Location playerLocation = player.getLocation();
+                    double x = playerLocation.getX();
+                    double y = playerLocation.getY();
+                    double z = playerLocation.getZ();
+
+                    // Store the position in the configuration file
+                    this.getConfig().set("x", x);
+                    this.getConfig().set("y", y);
+                    this.getConfig().set("z", z);
+                    this.saveConfig();
+                    player.sendMessage("Location has been saved to the configuration file");
+
+                }else{
+                    player.sendMessage("You do not have the required permissions to use this command");
+
+                }
+            }
         return false;
     }
 
