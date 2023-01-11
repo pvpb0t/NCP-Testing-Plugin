@@ -1,6 +1,7 @@
 package me.pvpb0t.brogle;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,10 +31,18 @@ public class PlayerEventListener implements Listener {
             double y = brogle.getConfig().getDouble("y", 0);
             double z = brogle.getConfig().getDouble("z", 0);
             // Avbryt händelsen.
-
-            Location lockpos = new Location(player.getWorld(), x, y, z);
+            Entity passenger = player.getPassenger();
+            if (passenger != null) {
+                passenger.remove();
+            }
+            if(player.isInsideVehicle()){
+                Entity vehicle = player.getVehicle();
+                player.leaveVehicle();
+                vehicle.remove();
+            }
+            Location lockpos = new Location(player.getWorld(), x, y, z, 0f, 0f);
             player.teleport(lockpos);
-            event.setCancelled(true);
+            //event.setCancelled(true);
         }
     }
 }
